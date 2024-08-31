@@ -92,6 +92,11 @@ class FlowControlInfo extends LteControlInfo {
     uint16 srcPort;                                       // source port
     uint16 dstPort;                                       // destination port
     int headerSize;                                       // IP + Transport header size (used by pdcp ROHC)
+    
+//    IPHACK: seems that OpenCV2X only craft non-IP package control info for the scheduling, should add those to IP package
+    int priority;
+    long duration;
+    simtime_t creationTime; 
 }
 
 class FlowControlInfoNonIp extends LteControlInfo {

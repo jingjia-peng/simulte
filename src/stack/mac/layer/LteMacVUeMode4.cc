@@ -630,7 +630,10 @@ void LteMacVUeMode4::handleMessage(cMessage *msg)
     {
         if (strcmp(pkt->getName(), "newDataPkt")== 0)
         {
-            FlowControlInfoNonIp* lteInfo = check_and_cast<FlowControlInfoNonIp*>(pkt->removeControlInfo());
+//            FlowControlInfoNonIp* lteInfo = check_and_cast<FlowControlInfoNonIp*>(pkt->removeControlInfo());
+//            IPHACK: seems that OpenCV2X only consider non-IP package, should change this to IP package
+            FlowControlInfo* lteInfo = check_and_cast<FlowControlInfo*>(pkt->removeControlInfo());
+
             receivedTime_ = NOW;
             simtime_t elapsedTime = receivedTime_ - lteInfo->getCreationTime();
             remainingTime_ = lteInfo->getDuration() - (elapsedTime.dbl() * 1000);

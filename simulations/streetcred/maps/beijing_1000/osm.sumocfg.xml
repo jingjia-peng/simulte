@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-06-01 06:42:46 by Eclipse SUMO sumo Version 1.18.0
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="/home/veins/workspace.omnetpp/simulte/simulations/streetcred/maps/beijing_1000/osm.net.xml.gz"/>
+        <route-files value="/home/veins/workspace.omnetpp/simulte/simulations/streetcred/maps/beijing_1000/osm.passenger.trips.xml"/>
+        <additional-files value="/home/veins/workspace.omnetpp/simulte/simulations/streetcred/maps/beijing_1000/osm.poly.xml.gz"/>
+    </input>
+
+    <processing>
+        <ignore-route-errors value="true"/>
+    </processing>
+
+    <routing>
+        <device.rerouting.adaptation-steps value="18"/>
+        <device.rerouting.adaptation-interval value="10"/>
+    </routing>
+
+    <report>
+        <verbose value="true"/>
+        <duration-log.statistics value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <gui_only>
+        <gui-settings-file value="/home/veins/workspace.omnetpp/simulte/simulations/streetcred/maps/beijing_1000/osm.view.xml"/>
+    </gui_only>
+
+</configuration>

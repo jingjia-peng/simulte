@@ -1790,9 +1790,11 @@ void LtePhyVUeMode4::updateCBR()
     emit(cbr, cbrValue);
     emit(cbrPscch, cbrPscchValue);
 
-    Cbr* cbrPkt = new Cbr("CBR");
-    cbrPkt->setCbr(cbrValue);
-    send(cbrPkt, upperGateOut_);
+//    IPHACK: Channel Busy Rate is just for statistic recording, we don't need this package in upper layer
+//    IPHACK: CBR is incompatible to IP package, it causes parsing error in lteNic.ip2lte
+//    Cbr* cbrPkt = new Cbr("CBR");
+//    cbrPkt->setCbr(cbrValue);
+//    send(cbrPkt, upperGateOut_);
 }
 
 void LtePhyVUeMode4::recordAwareness()

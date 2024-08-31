@@ -97,7 +97,7 @@ bool LteMacQueue::isEnqueueablePacket(cPacket* pkt){
             return enqueable;
         }
     } else {
-        EV_WARN << "LteMacQueue: cannot estimate remaining fragments - unknown packet type " << pkt->getFullName() << std::endl;
+        EV << "LteMacQueue: cannot estimate remaining fragments - unknown packet type " << pkt->getFullName() << std::endl;
     }
     // no fragments or unknown type -- can always be enqueued if there is enough space in the queue
     return (pkt->getByteLength() + getByteLength() < queueSize_);

@@ -35,7 +35,7 @@ out/
 backups
 *~
 *.log
-
+*.bk
 
 *.FAILED
 .cproject
@@ -53,3 +53,6 @@ ui/com.simulte.configeditor/bin/
 
 # ignore cLion editor
 .idea/
+
+# ignore vscode editor
+*.vscode/
