@@ -362,6 +362,9 @@ simple LteMacUeRealisticD2D extends LteMacUeRealistic
     int d2dCqi = default(7);
 }
 
+//
+//	Non-IP Mode4 MAC layer
+//
 simple LteMacVUeMode4 extends LteMacNonIPBase
 {
 	parameters:
@@ -385,8 +388,6 @@ simple LteMacVUeMode4 extends LteMacNonIPBase
 	    bool packetDropping = default(false);
 	    bool adjacencyPSCCHPSSCH = default(true);
 	    bool randomScheduling = default(false);
-
-	    bool usePreconfiguredTxParams = default(false);
 	    
 		// Signals 
 		//
@@ -438,6 +439,80 @@ simple LteMacVUeMode4 extends LteMacNonIPBase
 simple LteMacVUeMode4NonSPS extends LteMacVUeMode4
 {
 	@class("LteMacVUeMode4NonSPS");
+}
+
+//
+//	IP-based Mode4 MAC layer
+//
+simple LteMacVUeMode4D2D extends LteMacUeRealisticD2D
+{
+	parameters:
+	    
+	    @class("LteMacVUeMode4");
+	    
+	    //# TODO: Change this to use xmldoc to fill in these params as it's more complex than this.
+	    xml txConfig;
+	    int resourceReservationInterval = default(1);
+	    int maximumLatency = default(100);
+	    int minSubchannelNumberPSSCH = default(1);
+	    int maxSubchannelNumberPSSCH = default(10);
+	    int minMCSPSSCH = default(1);
+	    int maxMCSPSSCH = default(28);
+	    int allowedRetxNumberPSSCH = default(0);
+	    int numSubchannels = default(10);
+	    int subchannelSize = default(5);
+	    int reselectAfter = default(1);
+	    double probResourceKeep = default(0.4);
+	    bool useCBR = default(false);
+	    bool packetDropping = default(false);
+	    bool adjacencyPSCCHPSSCH = default(true);
+	    bool randomScheduling = default(false);
+	    
+		// Signals 
+		//
+		// Must haves:
+		// Grant break due to no time
+		// Grant break due to no large enough MCS
+		// Selected MCS
+		// Selected number of subchannels
+		// Packet size on break 
+		// Maximum capacity on grant break
+
+		@signal[grantStartTime];
+		@statistic[grantStartTime](title="Grant StartTime"; source="grantStartTime"; record=sum,vector);
+		@signal[takingReservedGrant];
+        @statistic[takingReservedGrant](title="takingReservedGrant"; source="takingReservedGrant"; record=mean,vector);
+		@signal[grantBreak];
+        @statistic[grantBreak](title="Total Number of Grant breaks"; source="grantBreak"; record=sum,vector);
+        @signal[grantBreakTiming];
+        @statistic[grantBreakTiming](title="Total number of Grant breaks due to not meeting time requirements"; source="grantBreakTiming"; record=sum,vector);
+		@signal[grantBreakSize];
+        @statistic[grantBreakSize](title="Total Number of Grant breaks due to not having enough capacity" ; source="grantBreakSize"; record=count,sum,vector);
+        @signal[droppedTimeout];
+        @statistic[droppedTimeout](title="Total Number of packets dropped due to a timeout" ; source="droppedTimeout"; record=sum,vector);
+        @signal[grantBreakMissedTrans];
+        @statistic[grantBreakMissedTrans](title="Total grant breaks due to missed transmissions"; source="grantBreakMissedTrans"; record=sum,vector);
+        @signal[missedTransmission];
+        @statistic[missedTransmission](title="Total Missed transmissions"; source="missedTransmission"; record=sum,vector);
+        @signal[selectedMCS];
+        @statistic[selectedMCS](title="MCS selected for transmission"; source="selectedMCS"; record=mean,vector);
+        @signal[selectedNumSubchannels];
+        @statistic[selectedNumSubchannels](title="SelectedNumSubchannels"; source="selectedNumSubchannels"; record=mean,vector);
+        @signal[selectedSubchannelIndex];
+        @statistic[selectedSubchannelIndex](title="SelectedSubchannelIndex"; source="selectedSubchannelIndex"; record=mean,vector);
+        @signal[maximumCapacity];
+        @statistic[maximumCapacity](title="Maximum capacity of grant"; source="maximumCapacity"; record=mean,vector);
+        @signal[grantRequests];
+        @statistic[grantRequests](title="Total number of requested grants"; source="grantRequests"; record=sum,vector);
+        @signal[packetDropDCC];
+        @statistic[packetDropDCC](title="Packet drop due to DCC mechanism"; source="packetDropDCC"; record=sum,vector);
+        @signal[resourceReselectionCounter];
+        @statistic[resourceReselectionCounter](title="ResourceReselectionCounter selectedNumber of transmissions"; source="resourceReselectionCounter"; record=sum,vector);
+        @signal[retainGrant];
+        @statistic[retainGrant](title="retainGrant if grant is maintained properly"; source="retainGrant"; record=sum,vector);
+
+        @signal[macNodeID];
+        @statistic[macNodeID](title="Reports Mac NodeID to allow for trans to nodeID"; source="macNodeID"; record=vector);
 }
 
 //
