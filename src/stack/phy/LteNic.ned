@@ -217,7 +217,7 @@ module LteNicVUeMode4 extends LteNicNonIpBase
 //
 // IP-based Mode 4 D2D User Equipment of LTE stack
 //
-module LteNicVUeMode4D2D extends LteNicIpBase
+module LteNicUeMode4D2D extends LteNicIpBase
 {
     parameters:
         LtePdcpRrcType = "LtePdcpRrcUeD2D";

@@ -1979,14 +1979,17 @@ void LtePhyVUeMode4::finish()
     if (getSimulation()->getSimulationStage() != CTX_FINISH)
     {
         // do this only at deletion of the module during the simulation
-        //LtePhyUe::finish();
-        LteAmc *amc = getAmcModule(masterId_);
-        if (amc != NULL)
-        {
-            amc->detachUser(nodeId_, UL);
-            amc->detachUser(nodeId_, DL);
-            amc->detachUser(nodeId_, D2D);
-        }
+//        LtePhyUe::finish();
+
+//    IPHACK: When a car leaves the playground, the finish() function tries to cast the upper MAC layer object MacVUeMode4* to MacEnb*
+//    I think this is an OpenCV2X implementation error...
+//        LteAmc *amc = getAmcModule(masterId_);
+//        if (amc != NULL)
+//        {
+//            amc->detachUser(nodeId_, UL);
+//            amc->detachUser(nodeId_, DL);
+//            amc->detachUser(nodeId_, D2D);
+//        }
 
         // binder call
         binder_->unregisterNextHop(masterId_, nodeId_);
