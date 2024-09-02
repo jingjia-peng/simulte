@@ -35,15 +35,17 @@ protected:
     double coinDepositLastTry;
     double RSU_POSITION_X;
     double RSU_POSITION_Y;
-    double lastDistanceToRSU;
+    double lastDistToRSU;
 
     MacNodeId nodeId_;
     LteBinder* binder_;
 
     /* TCPSocket::CallbackInterface callback methods */
     virtual void handleTimer(cMessage *msg) override {};
+
     void receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details) override;
     void handlePositionUpdate(cObject* obj);
+    void socketEstablished(int connId, void *ptr);
 
     /* CarApp parameters */
     CpuModel cpuModel;

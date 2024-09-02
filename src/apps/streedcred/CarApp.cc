@@ -48,7 +48,7 @@ void CarApp::initialize(int stage)
         coinDepositStage = CoinDepositStage::INIT;
         RSU_POSITION_X = par("RSU_POSITION_X");
         RSU_POSITION_Y = par("RSU_POSITION_Y");
-        lastDistanceToRSU = 10000;
+        lastDistToRSU = 10000;
 
         COIN_REQUEST_BYTE_SIZE = par("COIN_REQUEST_BYTE_SIZE");
         COIN_DEPOSIT_BYTE_SIZE = par("COIN_DEPOSIT_BYTE_SIZE");
@@ -67,12 +67,19 @@ void CarApp::initialize(int stage)
 
 void CarApp::handlePositionUpdate(cObject* obj){
         veins::VeinsInetMobility* const mobility = check_and_cast<veins::VeinsInetMobility*>(obj);
-        inet::Coord curPosition = mobility->getCurrentPosition();
-        double distanceToRSU = sqrt(pow(curPosition.x - RSU_POSITION_X, 2) + pow(curPosition.y - RSU_POSITION_Y, 2));
+        inet::Coord curPos = mobility->getCurrentPosition();
+        double distToRSU = sqrt(pow(curPos.x - RSU_POSITION_X, 2) + pow(curPos.y - RSU_POSITION_Y, 2));
         double currentTime = simTime().dbl();
 
+        // When approaching the intersection, trigger coin deposit.
+        // before first message sending, connect to RSU
+        if (distToRSU < 150 && distToRSU < lastDistToRSU
+                && socket.getState() == inet::TCPSocket::NOT_BOUND) {
+            connect();
+        }
+
         // When leaving the intersection, trigger coin assignment.
-        if (distanceToRSU < 150 && distanceToRSU > lastDistanceToRSU && coinAssignmentStage == CoinAssignmentStage::INIT) {
+        if (distToRSU < 150 && distToRSU > lastDistToRSU && coinAssignmentStage == CoinAssignmentStage::INIT) {
             coinAssignmentLastTry = currentTime;
             std::pair<double,double> latency = cpuModel.getLatency(currentTime, COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV);
 
@@ -81,30 +88,15 @@ void CarApp::handlePositionUpdate(cObject* obj){
             packet->setVid(nodeId_);
 
             // TODO: add delay before sending
+            connect();
             sendPacket(packet);
             coinAssignmentStage = CoinAssignmentStage::REQUESTED;
             EV_WARN << "[Vehicle " << nodeId_ << "]: I sent a message of CoinRequest. Queue time " << latency.first
                     << " Computation time " << latency.second << endl;
         }
-        // When approaching the intersection, trigger coin deposit.
-        if (distanceToRSU < 150 && distanceToRSU < lastDistanceToRSU && coinDepositStage == CoinDepositStage::INIT) {
-            coinDepositLastTry = currentTime;
-            std::pair<double,double> latency = cpuModel.getLatency(currentTime, COIN_DEPOSIT_LATENCY_MEAN, COIN_DEPOSIT_LATENCY_STDDEV);
 
-            CoinDeposit* packet = new CoinDeposit();
-            packet->setByteLength(COIN_DEPOSIT_BYTE_SIZE);
-            packet->setVid(nodeId_);
-
-            // before first send connect to RSU
-            connect();
-            // TODO: add delay before sending
-            sendPacket(packet);
-            coinDepositStage = CoinDepositStage::REQUESTED;
-            EV_WARN << "[Vehicle " << nodeId_ << "]: I sent a message of CoinDeposit. Queue time " << latency.first
-                    << " Computation time " << latency.second << endl;
-        }
         // When leaving the intersection, claim failure when the vehicle is too far from RSU
-        if (distanceToRSU > 150) {
+        if (distToRSU > 150) {
             if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
                 coinAssignmentStage = CoinAssignmentStage::FAILED;
                 EV_WARN << "[Vehicle " << nodeId_ << "]: Coin assignment failed." << endl;
@@ -114,7 +106,28 @@ void CarApp::handlePositionUpdate(cObject* obj){
                 EV_WARN << "[Vehicle " << nodeId_ << "]: Coin deposit failed." << endl;
             }
         }
-        lastDistanceToRSU = distanceToRSU;
+        lastDistToRSU = distToRSU;
+}
+
+void CarApp::socketEstablished(int connId, void *ptr)
+{
+    // *redefine* to perform or schedule first sending
+    TCPAppBase::socketEstablished(connId, ptr);
+    double currentTime = simTime().dbl();
+
+    if (coinDepositStage == CoinDepositStage::INIT) {
+        std::pair<double,double> latency = cpuModel.getLatency(currentTime, COIN_DEPOSIT_LATENCY_MEAN, COIN_DEPOSIT_LATENCY_STDDEV);
+
+        CoinDeposit* packet = new CoinDeposit();
+        packet->setByteLength(COIN_DEPOSIT_BYTE_SIZE);
+        packet->setVid(nodeId_);
+
+//      TODO: add delay before sending
+        sendPacket(packet);
+        coinDepositStage = CoinDepositStage::REQUESTED;
+        EV_WARN << "[Vehicle " << nodeId_ << "]: I sent a message of CoinDeposit. Queue time " << latency.first
+                << " Computation time " << latency.second << endl;
+    }
 }
 
 void CarApp::receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details){
