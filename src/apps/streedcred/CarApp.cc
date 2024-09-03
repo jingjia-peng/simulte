@@ -73,8 +73,8 @@ void CarApp::handlePositionUpdate(cObject* obj){
 
         // When approaching the intersection, trigger coin deposit.
         // before first message sending, connect to RSU
-        if (distToRSU < 150 && distToRSU < lastDistToRSU
-                && socket.getState() == inet::TCPSocket::NOT_BOUND) {
+        if (distToRSU < 150 && distToRSU < lastDistToRSU && coinDepositStage == CoinDepositStage::INIT
+                && (socket.getState() == inet::TCPSocket::BOUND || socket.getState() == inet::TCPSocket::NOT_BOUND)) {
             connect();
         }
 

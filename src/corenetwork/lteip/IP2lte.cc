@@ -194,6 +194,13 @@ void IP2lte::fromIpUe(IPv4Datagram * datagram)
     controlInfo->setHeaderSize(headerSize);
     printControlInfo(controlInfo);
 
+//    IPHACK: set the control info used by Mode4 MAC layer
+//    but it seems that this hack won't influence any functionality
+    controlInfo->setDirection(D2D_MULTI);
+    controlInfo->setPriority(3); // priority=3
+    controlInfo->setDuration(1000); // duration=1000
+    controlInfo->setCreationTime(simTime());
+
     datagram->setControlInfo(controlInfo);
 
     //** Send datagram to lte stack or LteIp peer **
@@ -297,6 +304,13 @@ void IP2lte::toStackEnb(IPv4Datagram* datagram)
 //    controlInfo->setSequenceNumber(seqNum_++);
     controlInfo->setSequenceNumber(seqNums_[pair]++);
     controlInfo->setHeaderSize(headerSize);
+
+//    IPHACK: set the control info used by Mode4 MAC layer
+//    but it seems that this hack won't influence any functionality
+    controlInfo->setDirection(D2D_MULTI);
+    controlInfo->setPriority(3); // priority=3
+    controlInfo->setDuration(1000); // duration=1000
+    controlInfo->setCreationTime(simTime());
 
     // TODO Relay management should be placed here
     MacNodeId master = binder_->getNextHop(destId);

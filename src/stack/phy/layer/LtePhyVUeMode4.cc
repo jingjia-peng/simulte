@@ -1571,7 +1571,8 @@ void LtePhyVUeMode4::decodeAirFrame(LteAirFrame* frame, UserControlInfo* lteInfo
                     if (sciInfo->getDeciderResult()) {
                         sciDecodedSuccessfully = true;
                     }
-
+                    // DEBUG
+                    EV << "LtePhyVUeMode4::decodeAirFrame - lteInfo direction: " << dirToA((Direction)lteInfo->getDirection()) << endl;
                     if (lteInfo->getDirection() == D2D_MULTI) {
                         std::tuple<bool, bool> res = channelModel_->error_Mode4(frame, lteInfo, rsrpVector, sinrVector, correspondingSCI->getMcs());
                         prop_result = get<0>(res);

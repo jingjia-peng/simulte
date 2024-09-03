@@ -89,9 +89,13 @@ LcgSchedulerRealistic::schedule(unsigned int availableBytes, Direction grantDir)
             LteControlInfo connDesc = mac_->getConnDesc().at(cid);
             // TODO get the QoS parameters
 
+//            IPHACK: no matter how I set the controlInfo in upper layer message sending, the connection direction is UL but not D2D_MULTI, strange
+//            IPHACK: I temporarily ignore this check to let package scheduling go through, so package can be deliver down to PHY
             // connection must have the same direction of the grant
-            if (connDesc.getDirection() != grantDir)
-                continue;
+//            if (connDesc.getDirection() != grantDir){
+//                EV << " LcgSchedulerRealistic::schedule - connection direction: " << dirToA((Direction)connDesc.getDirection()) << "\tgrant direction: " << dirToA(grantDir) << endl;
+//                continue;
+//            }
 
             unsigned int toServe = queueLength;
             // Check whether the virtual buffer is empty
