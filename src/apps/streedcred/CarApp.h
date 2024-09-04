@@ -45,7 +45,7 @@ protected:
 
     void receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details) override;
     void handlePositionUpdate(cObject* obj);
-    void socketEstablished(int connId, void *ptr);
+    void socketEstablished(int connId, void *ptr) override;
 
     /* CarApp parameters */
     CpuModel cpuModel;

@@ -1496,7 +1496,7 @@ std::tuple<std::vector<double>, std::vector<double>> LteRealisticChannelModel::g
 
         // denominator expressed in dBm as (N+extCell+inCell)
         double denSinr;
-        EV << "LteRealisticChannelModel::getSINR - distance from my Peer = " << destCoord.distance(sourceCoord) << " - DIR=" << dirToA(dir)  << endl;
+        // EV << "LteRealisticChannelModel::getSINR - distance from my Peer = " << destCoord.distance(sourceCoord) << " - DIR=" << dirToA(dir)  << endl;
 
         // Add interference for each band
         for (unsigned int i = 0; i < band_; i++)

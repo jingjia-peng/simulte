@@ -318,6 +318,11 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
 
             // make a copy of lte control info and store it to traffic descriptors map
             LteControlInfo toStore(*lteInfo);
+//            DEBUG: check control info direction
+//            EV << "LteMacUeRealistic::bufferizePacket - package control info " << dirToA((Direction)toStore.getDirection()) << endl;
+//            IPHACK: change the package direction to D2D_MULTI so it can go through PHY
+            toStore.setDirection(D2D_MULTI);
+
             connDesc_[cid] = toStore;
             // register connection to lcg map.
             LteTrafficClass tClass = (LteTrafficClass) lteInfo->getTraffic();
