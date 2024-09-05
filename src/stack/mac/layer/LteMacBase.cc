@@ -227,6 +227,9 @@ bool LteMacBase::bufferizePacket(cPacket* pkt)
 
 void LteMacBase::deleteQueues(MacNodeId nodeId)
 {
+    //  DEBUG: see if some mac buffer cids are deleted
+    EV << "LteMacBase::deleteQueues - deleting cid " << MacCidToNodeId(nodeId) << endl;
+
     LteMacBuffers::iterator mit;
     LteMacBufferMap::iterator vit;
     for (mit = mbuf_.begin(); mit != mbuf_.end(); )

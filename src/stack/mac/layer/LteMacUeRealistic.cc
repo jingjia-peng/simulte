@@ -100,6 +100,7 @@ void LteMacUeRealistic::macPduMake()
 
     //  Build a MAC pdu for each scheduled user on each codeword
     LteMacScheduleList::const_iterator it;
+
     for (it = scheduleList_->begin(); it != scheduleList_->end(); it++)
     {
         LteMacPdu* macPkt;
@@ -319,7 +320,10 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
             // make a copy of lte control info and store it to traffic descriptors map
             LteControlInfo toStore(*lteInfo);
 //            DEBUG: check control info direction
-//            EV << "LteMacUeRealistic::bufferizePacket - package control info " << dirToA((Direction)toStore.getDirection()) << endl;
+            EV << "LteMacUeRealistic::bufferizePacket - package control info direction: "
+                    << dirToA((Direction)toStore.getDirection())
+                    << "\tcid:" << cid
+                    << endl;
 //            IPHACK: change the package direction to D2D_MULTI so it can go through PHY
             toStore.setDirection(D2D_MULTI);
 
@@ -349,6 +353,12 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
     // this is a MAC SDU, bufferize it in the MAC buffer
 
     LteMacBuffers::iterator it = mbuf_.find(cid);
+//    DEBUG
+    EV << "LteMacUeRealistic::bufferizePacket - current mbuf contains cid: ";
+    for (auto& buf : mbuf_){
+        EV << "\t" << buf.first << endl;
+    }
+
     if (it == mbuf_.end())
     {
         // Queue not found for this cid: create
@@ -359,7 +369,7 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
         mbuf_[cid] = queue;
 
         EV << "LteMacBuffers : Using new buffer on node: " <<
-        MacCidToNodeId(cid) << " for Lcid: " << MacCidToLcid(cid) << ", Space left in the Queue: " <<
+        MacCidToNodeId(cid) << " for Lcid: " << MacCidToLcid(cid) << " MacCid: " << cid << ", Space left in the Queue: " <<
         queue->getQueueSize() - queue->getByteLength() << "\n";
     }
     else
@@ -398,6 +408,7 @@ void LteMacUeRealistic::handleUpperMessage(cPacket* pkt)
     MacCid cid = idToMacCid(lteInfo->getDestId(), lteInfo->getLcid());
 
     // bufferize packet
+//    DEBUG: here we only receive one cid RlcFragment and add it to buffer, but our scheduleList has two cid
     bufferizePacket(pkt);
 
     if (strcmp(pkt->getName(), "lteRlcFragment") == 0)
@@ -407,7 +418,18 @@ void LteMacUeRealistic::handleUpperMessage(cPacket* pkt)
             delete pkt;
 
         // creates pdus from schedule list and puts them in harq buffers
-        macPduMake();
+
+//        DEBUG
+        EV << "LteMacUeRealistic::handleUpperMessage - mbuf.size=" << mbuf_.size() << " scheduleList.size=" << scheduleList_->size() << endl;
+        EV << "mbuf content: ";
+        for (auto& mbuf : mbuf_){
+            EV << "macCid:" << mbuf.first "\t"<< *(mbuf.second);
+        };EV << endl;
+
+//        IPHACK: call macPduMake only if all RLC scheduling packet is received and bufferized
+//        IPHACK: call macPduMake only if all mac buffers are not empty
+        if (mbuf_.size()==scheduleList_->size())
+            macPduMake();
 
         EV << NOW << " LteMacUeRealistic::handleUpperMessage - incrementing counter for HARQ processes " << (unsigned int)currentHarq_ << " --> " << (currentHarq_+1)%harqProcesses_ << endl;
         currentHarq_ = (currentHarq_+1)%harqProcesses_;

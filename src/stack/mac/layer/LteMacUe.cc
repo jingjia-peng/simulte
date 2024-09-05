@@ -744,6 +744,9 @@ void LteMacUe::doHandover(MacNodeId targetEnb)
 
 void LteMacUe::deleteQueues(MacNodeId nodeId)
 {
+//  DEBUG: see if some mac buffer cids are deleted
+    EV << "LteMacUe::deleteQueues - deleting cid " << MacCidToNodeId(nodeId) << endl;
+
     LteMacBuffers::iterator mit;
     LteMacBufferMap::iterator vit;
     for (mit = mbuf_.begin(); mit != mbuf_.end(); )

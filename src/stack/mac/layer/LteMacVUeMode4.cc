@@ -341,6 +341,13 @@ void LteMacVUeMode4::macPduMake()
 
     macPduList_.clear();
 
+    //    DEBUG
+    EV << "LteMacUeRealistic::macPduMake - scheduleList cids: ";
+    for (auto sl : *scheduleList_){
+        EV << sl.first.first << "\t";
+    }
+    EV << endl;
+
     // In a D2D communication if BSR was created above this part isn't executed
     // Build a MAC PDU for each scheduled user on each codeword
     LteMacScheduleList::const_iterator it;
@@ -406,6 +413,12 @@ void LteMacVUeMode4::macPduMake()
 
         while (sduPerCid > 0)
         {
+//            DEBUG: it seems strange that it is empty because LteMacUeRealistic::bufferizePacket successfully insert it into mbuf
+            EV << "LteMacVUeMode4::macPduMake - current mbuf contains cid: ";
+            for (auto& buf : mbuf_){
+                EV << "\t" << buf.first << endl;
+            }
+
             // Add SDU to PDU
             // Find Mac Pkt
             if (mbuf_.find(destCid) == mbuf_.end())
