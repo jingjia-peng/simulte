@@ -324,6 +324,10 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
                     << dirToA((Direction)toStore.getDirection())
                     << "\tcid:" << cid
                     << endl;
+            EV << "LteMacUeRealistic::bufferizePacket - package control info direction: "
+                    << dirToA((Direction)toStore.getDirection())
+                    << "\tcid:" << cid
+                    << endl;
 //            IPHACK: change the package direction to D2D_MULTI so it can go through PHY
             toStore.setDirection(D2D_MULTI);
 
