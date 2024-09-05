@@ -421,18 +421,25 @@ void LteMacUeRealistic::handleUpperMessage(cPacket* pkt)
 
 //        DEBUG
         EV << "LteMacUeRealistic::handleUpperMessage - mbuf.size=" << mbuf_.size() << " scheduleList.size=" << scheduleList_->size() << endl;
-        EV << "mbuf content: ";
+        EV << "mbuf content: " << endl;
         for (auto& mbuf : mbuf_){
-            EV << "macCid:" << mbuf.first "\t"<< *(mbuf.second);
-        };EV << endl;
+            EV << "macCid:" << mbuf.first << "  "<< mbuf.second << endl;
+        };
 
-//        IPHACK: call macPduMake only if all RLC scheduling packet is received and bufferized
-//        IPHACK: call macPduMake only if all mac buffers are not empty
-        if (mbuf_.size()==scheduleList_->size())
+//        IPHACK: call macPduMake() only if all RLC scheduling packet is received and bufferized
+//        IPHACK: call macPduMake() only if all mac buffers are not empty
+        bool mbufNotEmpty = true;
+        for (auto& mbuf : mbuf_){
+            if (mbuf.second->empty()){
+                mbufNotEmpty = false;
+                break;
+            }
+        };
+        if (mbuf_.size()==scheduleList_->size() && mbufNotEmpty){
             macPduMake();
-
-        EV << NOW << " LteMacUeRealistic::handleUpperMessage - incrementing counter for HARQ processes " << (unsigned int)currentHarq_ << " --> " << (currentHarq_+1)%harqProcesses_ << endl;
-        currentHarq_ = (currentHarq_+1)%harqProcesses_;
+            EV << NOW << " LteMacUeRealistic::handleUpperMessage - incrementing counter for HARQ processes " << (unsigned int)currentHarq_ << " --> " << (currentHarq_+1)%harqProcesses_ << endl;
+            currentHarq_ = (currentHarq_+1)%harqProcesses_;
+        }
     }
     else
     {
