@@ -196,7 +196,7 @@ void IP2lte::fromIpUe(IPv4Datagram * datagram)
 
 //    IPHACK: set the control info used by Mode4 MAC layer
 //    but it seems that this hack won't influence any functionality
-    controlInfo->setDirection(D2D_MULTI);
+    controlInfo->setDirection(D2D);
     controlInfo->setPriority(3); // priority=3
     controlInfo->setDuration(1000); // duration=1000
     controlInfo->setCreationTime(simTime());
@@ -307,7 +307,7 @@ void IP2lte::toStackEnb(IPv4Datagram* datagram)
 
 //    IPHACK: set the control info used by Mode4 MAC layer
 //    but it seems that this hack won't influence any functionality
-    controlInfo->setDirection(D2D_MULTI);
+    controlInfo->setDirection(D2D);
     controlInfo->setPriority(3); // priority=3
     controlInfo->setDuration(1000); // duration=1000
     controlInfo->setCreationTime(simTime());

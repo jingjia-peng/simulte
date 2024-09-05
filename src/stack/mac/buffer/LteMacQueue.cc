@@ -9,6 +9,7 @@
 
 #include <climits>
 #include "stack/mac/buffer/LteMacQueue.h"
+#include "stack/rlc/packet/LteRlcPdu.h"
 
 LteMacQueue::LteMacQueue(int queueSize) :
     cPacketQueue("LteMacQueue")
@@ -80,6 +81,10 @@ int64_t LteMacQueue::getQueueSize() const
 
 bool LteMacQueue::isEnqueueablePacket(cPacket* pkt){
     LteRlcPdu_Base* pdu = dynamic_cast<LteRlcPdu_Base *>(pkt);
+//    DEBUG: pkt is LteRlcPdu* but why it cannot cast to its base class?
+    LteRlcPdu* test = dynamic_cast<LteRlcPdu *>(pkt);
+    EV << "pkt cast to LteRlcPdu* = " << (test != NULL) << endl;
+
     if(queueSize_ == 0){
         // unlimited queue size -- nothing to check for
         return true;
@@ -99,8 +104,12 @@ bool LteMacQueue::isEnqueueablePacket(cPacket* pkt){
     } else {
         EV << "LteMacQueue: cannot estimate remaining fragments - unknown packet type " << pkt->getFullName() << std::endl;
     }
+    //    DEBUG
+    bool flag = (pkt->getByteLength() + getByteLength() < queueSize_);
+    EV << "isEnqueueable=" << flag << std::endl;
+
     // no fragments or unknown type -- can always be enqueued if there is enough space in the queue
-    return (pkt->getByteLength() + getByteLength() < queueSize_);
+    return flag;
 }
 
 int LteMacQueue::getQueueLength() const
