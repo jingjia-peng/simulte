@@ -25,6 +25,7 @@ Define_Module(RSUApp);
 void RSUApp::initialize(int stage)
 {
     TCPSrvHostApp::initialize(stage);
+
     if (stage==inet::INITSTAGE_LOCAL){
         int numCpuCores = par("numCpuCores");
         cpuModel.init(numCpuCores);
@@ -46,12 +47,16 @@ void RSUApp::initialize(int stage)
         cModule *ue = getParentModule();
         // Register with the binder
         nodeId_ = binder_->registerNode(ue, UE, 0);
+
         // Get my IP address
         L3Address ip;
         L3AddressResolver().tryResolve(par("localAddress"), ip);
         // Register the nodeId_ with the binder.
         binder_->setMacNodeId(ip.toIPv4(), nodeId_);
         EV_WARN << "[RSU] MAC address: " << nodeId_ << " IP address: " << ip << endl;
+
+        // Set TCP address
+
     }
 }
 

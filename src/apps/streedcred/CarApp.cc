@@ -17,6 +17,7 @@
 #include <omnetpp.h>
 #include "inet/common/FindModule.h"
 #include "veins_inet/VeinsInetMobility.h"
+#include "inet/networklayer/common/L3AddressResolver.h"
 #include "message/CoinRequest_m.h"
 #include "message/CoinDeposit_m.h"
 #include "message/CoinDepositSignatureResponse_m.h"
@@ -27,21 +28,6 @@ void CarApp::initialize(int stage)
 {
     TCPAppBase::initialize(stage);
     if (stage==inet::INITSTAGE_LOCAL){
-        // Register the node with the binder
-        // Issue primarily is how do we set the link layer address
-
-        // Get the binder
-        binder_ = getBinder();
-
-        // Get our UE
-        cModule *ue = getParentModule();
-
-        //Register with the binder
-        nodeId_ = binder_->registerNode(ue, UE, 0);
-
-        // Register the nodeId_ with the binder.
-        binder_->setMacNodeId(nodeId_, nodeId_);
-
         FindModule<>::findHost(this)->subscribe(veins::VeinsInetMobility::mobilityStateChangedSignal, this);
 
         coinAssignmentStage = CoinAssignmentStage::INIT;
@@ -50,6 +36,7 @@ void CarApp::initialize(int stage)
         RSU_POSITION_Y = par("RSU_POSITION_Y");
         lastDistToRSU = 10000;
 
+        cpuModel.init(1);
         COIN_REQUEST_BYTE_SIZE = par("COIN_REQUEST_BYTE_SIZE");
         COIN_DEPOSIT_BYTE_SIZE = par("COIN_DEPOSIT_BYTE_SIZE");
         COIN_DEPOSIT_SIGNATURE_RESPONSE_BYTE_SIZE = par("COIN_DEPOSIT_SIGNATURE_RESPONSE_BYTE_SIZE");
@@ -60,8 +47,21 @@ void CarApp::initialize(int stage)
         COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN = par("COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN");
         COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV = par("COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV");
     } else if (stage==inet::INITSTAGE_APPLICATION_LAYER) {
-        cpuModel.init(1);
-        EV_WARN << "[Vehicle " << nodeId_ << "]: Initialized" << endl;
+        // Register the node with the binder
+        // Issue primarily is how do we set the link layer address
+        // Get the binder
+        binder_ = getBinder();
+        // Get our UE
+        cModule *ue = getParentModule();
+        //Register with the binder
+        nodeId_ = binder_->registerNode(ue, UE, 0);
+
+        // Get my IP address
+        L3Address ip;
+        L3AddressResolver().tryResolve(par("localAddress"), ip);
+        // Register the nodeId_ with the binder.
+        binder_->setMacNodeId(ip.toIPv4(), nodeId_);
+        EV_WARN << "[Vehicle " << nodeId_ << "] MAC address: " << nodeId_ << " IP address: " << ip << endl;
     }
 }
 

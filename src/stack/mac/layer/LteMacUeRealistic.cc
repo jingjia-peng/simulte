@@ -326,7 +326,7 @@ bool LteMacUeRealistic::bufferizePacket(cPacket* pkt)
                     << endl;
 
 //            IPHACK: change the package direction to D2D_MULTI so it can go through PHY
-            toStore.setDirection(D2D);
+            toStore.setDirection(D2D_MULTI);
 
             connDesc_[cid] = toStore;
             // register connection to lcg map.

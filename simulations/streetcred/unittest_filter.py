@@ -3,8 +3,8 @@ import sys
 output_name = sys.argv[1] + ".log"
 
 with open("simulation.log",'r') as input, open(output_name,'w') as output:
-    infos = ["[RSU]","[Vehicle 1029]"]
-    details = ["Intersection.rsu[0]","Intersection.node[1]"]
+    infos = ["[RSU]","[Vehicle 1027]"]
+    details = ["Intersection.rsu[0]","Intersection.node[0]"]
     writedetails = False
     for line in input:
         if any(s in line for s in infos):

@@ -41,8 +41,8 @@
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-	<flow id="flow_WE" begin="0.00" from="E3" to="E4" end="3600.00" vehsPerHour="1112.00"/>
-    <flow id="flow_WN" begin="0.00" from="E3" to="E6" end="3600.00" vehsPerHour="61.00"/>
+    <flow id="flow_WN" begin="0.00" from="E3" to="E6" end="3600.00" vehsPerHour="100.00"/>
+<!-- 
     <flow id="flow_WS" begin="0.00" from="E3" to="-E5" end="3600.00" vehsPerHour="55.00"/>
     <flow id="flow_NE" begin="0.00" from="-E6" to="E4" end="3600.00" vehsPerHour="548.00"/>
     <flow id="flow_NW" begin="0.00" from="-E6" to="-E3" end="3600.00" vehsPerHour="102.00"/>
@@ -53,4 +53,6 @@
     <flow id="flow_SN" begin="0.00" from="E5" to="E6" end="3600.00" vehsPerHour="176.00"/>
     <flow id="flow_SE" begin="0.00" from="E5" to="E4" end="3600.00" vehsPerHour="365.00"/>
     <flow id="flow_SW" begin="0.00" from="E5" to="-E3" end="3600.00" vehsPerHour="158.00"/>
+	<flow id="flow_WE" begin="0.00" from="E3" to="E4" end="3600.00" vehsPerHour="1112.00"/>
+-->
 </routes>
