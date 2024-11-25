@@ -22,6 +22,8 @@
 
 Define_Module(RSUApp);
 
+using std::string;
+
 void RSUApp::initialize(int stage)
 {
     TCPSrvHostApp::initialize(stage);
@@ -49,14 +51,11 @@ void RSUApp::initialize(int stage)
         nodeId_ = binder_->registerNode(ue, UE, 0);
 
         // Get my IP address
-        L3Address ip;
-        L3AddressResolver().tryResolve(par("localAddress"), ip);
+        IPv4Address ip = L3AddressResolver().resolve(string("rsu[0]").c_str()).toIPv4();
+
         // Register the nodeId_ with the binder.
-        binder_->setMacNodeId(ip.toIPv4(), nodeId_);
+        binder_->setMacNodeId(ip, nodeId_);
         EV_WARN << "[RSU] MAC address: " << nodeId_ << " IP address: " << ip << endl;
-
-        // Set TCP address
-
     }
 }
 

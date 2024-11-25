@@ -17,6 +17,7 @@ import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.contract.IRoutingTable;
 import inet.networklayer.contract.INetworkLayer;
 import inet.networklayer.configurator.ipv4.HostAutoConfigurator;
+import inet.networklayer.configurator.ipv4.IPv4NodeConfigurator;
 import inet.transportlayer.tcp.TCP;
 import inet.transportlayer.udp.UDP;
 import lte.stack.phy.ILteNic;

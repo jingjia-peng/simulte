@@ -63,7 +63,13 @@ void LtePdcpRrcUeD2D::fromDataIn(cPacket *pkt)
             // This part is required for supporting D2D unicast with dynamic-created modules
             // the first time we see a new destination address, we need to check whether the endpoint
             // is a D2D peer and, eventually, add it to the binder
-            const char* destName = (L3AddressResolver().findHostWithAddress(destAddr))->getFullName();
+            EV << "LtePdcpRrcUeD2D::fromDataIn - before address resolution" << endl;
+            auto host = L3AddressResolver().findHostWithAddress(destAddr);
+            EV << "LtePdcpRrcUeD2D::fromDataIn - gethost " << host << endl;
+            EV << "LtePdcpRrcUeD2D::fromDataIn - host name " << host->str() << endl;
+            EV << "LtePdcpRrcUeD2D::fromDataIn - host path " << host->getFullPath() << endl;
+            const char* destName = host->getFullName();
+            EV << "LtePdcpRrcUeD2D::fromDataIn - after address resolution" << endl;
             if (d2dPeeringInit_.find(destName) == d2dPeeringInit_.end() || !d2dPeeringInit_.at(destName))
             {
                 MacNodeId d2dPeerId = binder_->getMacNodeId(destAddr);

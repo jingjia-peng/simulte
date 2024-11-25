@@ -269,9 +269,9 @@ class LteBinder : public cSimpleModule
     MacNodeId getMacNodeId(IPv4Address address)
     {
         // DEBUG: see what is inside macNodeIdToIPAddress_
-        EV << "macNodeIdToIPAddress content\n";
-        for (auto& it : macNodeIdToIPAddress_)
-            EV << "IPv4=" << it.first << " MacId=" << it.second << "\n";
+        // EV << "macNodeIdToIPAddress content\n";
+        // for (auto& it : macNodeIdToIPAddress_)
+        //     EV << "IPv4=" << it.first << " MacId=" << it.second << "\n";
 
         if (macNodeIdToIPAddress_.find(address) == macNodeIdToIPAddress_.end())
             return 0;
