@@ -19,7 +19,6 @@
 #include "common.h"
 #include "CpuModel.h"
 #include "corenetwork/binder/LteBinder.h"
-#include "inet/common/INETDefs.h"
 #include "inet/applications/tcpapp/TCPSrvHostApp.h"
 #include <map>
 

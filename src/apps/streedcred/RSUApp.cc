@@ -15,7 +15,12 @@
 
 #include "RSUApp.h"
 #include <omnetpp.h>
+
+#include "inet/common/INETDefs.h"
+#include "inet/common/ModuleAccess.h"
+#include "inet/common/lifecycle/NodeStatus.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
+
 #include "message/CoinAssignment_m.h"
 #include "message/CoinDepositSignatureRequest_m.h"
 #include "message/CoinSubmission_m.h"
@@ -26,7 +31,7 @@ using std::string;
 
 void RSUApp::initialize(int stage)
 {
-    TCPSrvHostApp::initialize(stage);
+    cSimpleModule::initialize(stage);
 
     if (stage==inet::INITSTAGE_LOCAL){
         int numCpuCores = par("numCpuCores");
@@ -40,7 +45,8 @@ void RSUApp::initialize(int stage)
         COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV = par("COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV");
         COIN_SUBMISSION_LATENCY_MEAN = par("COIN_SUBMISSION_LATENCY_MEAN");
         COIN_SUBMISSION_LATENCY_STDDEV = par("COIN_SUBMISSION_LATENCY_STDDEV");
-    } else if (stage==inet::INITSTAGE_APPLICATION_LAYER) {
+    }
+    else if (stage==inet::INITSTAGE_APPLICATION_LAYER) {
         // Register the node with the binder
         // Issue primarily is how do we set the link layer address
         // Get the binder
@@ -50,12 +56,23 @@ void RSUApp::initialize(int stage)
         // Register with the binder
         nodeId_ = binder_->registerNode(ue, UE, 0);
 
-        // Get my IP address
+        // Get my IP address and set the socket
         IPv4Address ip = L3AddressResolver().resolve(string("rsu[0]").c_str()).toIPv4();
+        int localPort = par("localPort");
+        serverSocket.setOutputGate(gate("tcpOut"));
+        serverSocket.readDataTransferModePar(*this);
+        serverSocket.bind(ip, localPort);
+        serverSocket.listen();
 
         // Register the nodeId_ with the binder.
         binder_->setMacNodeId(ip, nodeId_);
         EV_WARN << "[RSU] MAC address: " << nodeId_ << " IP address: " << ip << endl;
+
+        bool isOperational;
+        NodeStatus *nodeStatus = dynamic_cast<NodeStatus *>(findContainingNode(this)->getSubmodule("status"));
+        isOperational = (!nodeStatus) || nodeStatus->getState() == NodeStatus::UP;
+        if (!isOperational)
+            throw cRuntimeError("This module doesn't support starting in node DOWN state");
     }
 }
 
