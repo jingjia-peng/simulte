@@ -30,7 +30,8 @@ moduleinterface LteMac {
 // Base module for the MAC layer of LTE Stack.
 //
 simple LteMacIPBase like LteMac {
-    parameters:
+        bool debug = default(false);
+        
         @display("i=block/mac");
         string interfaceTableModule;
         
