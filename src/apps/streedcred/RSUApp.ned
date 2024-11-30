@@ -23,7 +23,7 @@ simple RSUApp like ITCPApp
     parameters:
 		string localAddress = default("");
 		int localPort = default(1000);
-		string serverThreadClass = default("TCPRSUThread");
+		string serverThreadClass = default("RSUThread");
 		string dataTransferMode @enum("bytecount", "object", "bytestream") = default("bytecount");
 		
 		int numCpuCores;

@@ -28,4 +28,6 @@ public:
     virtual void timerExpired(cMessage *timer) override {};
 };
 
+Register_Class(RSUThread)
+
 #endif /* APPS_TCPSTREEDCRED_TCPRSUTHREAD_H_ */

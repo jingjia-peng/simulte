@@ -60,18 +60,11 @@ void CarApp::initialize(int stage)
         //Register with the binder
         nodeId_ = binder_->registerNode(ue, UE, 0);
 
-        L3AddressResolver ipResolver;
-
-        // Get RSU IP address
-        IPv4Address rsuip = ipResolver.resolve(string("rsu[0]").c_str()).toIPv4();
-        EV << "RSU IP=" << rsuip << endl;
-
         // Get my IP address
+        L3AddressResolver ipResolver;
         string myname = "node["+to_string(getIndex())+"]";
         L3Address addr = ipResolver.resolve(myname.c_str());
-        EV << myname << " address=" << addr << endl;
         IPv4Address ip = addr.toIPv4();
-        EV << myname << " IP=" << ip << endl;
 
         // Register the nodeId_ with the binder.
         binder_->setMacNodeId(ip, nodeId_);
