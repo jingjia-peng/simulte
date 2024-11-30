@@ -78,7 +78,7 @@ void RSUApp::initialize(int stage)
 
 void RSUApp::handleMessage(cMessage *msg){
     TCPSrvHostApp::handleMessage(msg);
-    EV_WARN << "[RSU]: receive a message" << endl;
+    EV_WARN << "[RSU]: processed a message!" << endl;
 }
 
 RSUApp::~RSUApp() {

@@ -20,14 +20,20 @@
 
 class RSUThread : public inet::TCPServerThreadBase {
 public:
-    RSUThread();
-    virtual ~RSUThread();
+    RSUThread() {};
+    virtual ~RSUThread() {};
 
-    virtual void established() override {};
-    virtual void dataArrived(cMessage *msg, bool urgent) override {};
-    virtual void timerExpired(cMessage *timer) override {};
+    void dataArrived(cMessage *msg, bool urgent) override;
+
+    virtual void established() override {
+        // no initialization needed
+    };
+
+    virtual void timerExpired(cMessage *timer) override {
+        // no timers in this serverThread
+    };
 };
 
 Register_Class(RSUThread)
 
-#endif /* APPS_TCPSTREEDCRED_TCPRSUTHREAD_H_ */
+#endif /* APPS_STREEDCRED_RSUTHREAD_H_ */
