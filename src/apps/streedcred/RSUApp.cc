@@ -60,7 +60,7 @@ void RSUApp::initialize(int stage)
         IPv4Address ip = L3AddressResolver().resolve(string("rsu[0]").c_str()).toIPv4();
         int localPort = par("localPort");
         serverSocket.setOutputGate(gate("tcpOut"));
-        serverSocket.readDataTransferModePar(*this);
+        serverSocket.readDataTransferModePar(*this); // TCP_TRANSFER_OBJECT
         serverSocket.bind(ip, localPort);
         serverSocket.listen();
 

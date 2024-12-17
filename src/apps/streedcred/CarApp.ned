@@ -25,7 +25,7 @@ simple CarApp like ITCPApp
         int localPort = default(-1);
         string connectAddress = default("");
         int connectPort = default(1000);
-        string dataTransferMode @enum("bytecount", "object", "bytestream") = default("bytecount");
+        string dataTransferMode @enum("bytecount", "object", "bytestream") = default("object");
         
         double RSU_POSITION_X;
         double RSU_POSITION_Y;

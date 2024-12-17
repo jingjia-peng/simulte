@@ -42,6 +42,7 @@ protected:
 
     /* TCPSocket::CallbackInterface callback methods */
     virtual void handleTimer(cMessage *msg) override {};
+    virtual void socketDataArrived(int connId, void *yourPtr, cPacket *msg, bool urgent) override;
 
     void receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details) override;
     void handlePositionUpdate(cObject* obj);

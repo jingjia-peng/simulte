@@ -24,7 +24,8 @@
 
 void RSUThread::dataArrived(cMessage *msg, bool)
 {
-    EV_WARN << "[RSUThread]: I received a data message of class " << msg->getClassName() << " and name " << msg->getName() << endl;
+    EV_WARN << "[RSUThread]: I received a data message of class " << msg->getClassName()
+            << ", name " << msg->getName() << ", byte " << PK(msg)->getByteLength() << endl;
 
     if (CoinRequest* req = dynamic_cast<CoinRequest*>(msg)) {
         int vid = req->getVid();

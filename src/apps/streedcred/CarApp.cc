@@ -18,8 +18,10 @@
 #include "inet/common/FindModule.h"
 #include "veins_inet/VeinsInetMobility.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
+#include "message/CoinAssignment_m.h"
 #include "message/CoinRequest_m.h"
 #include "message/CoinDeposit_m.h"
+#include "message/CoinDepositSignatureRequest_m.h"
 #include "message/CoinDepositSignatureResponse_m.h"
 
 Define_Module(CarApp);
@@ -125,6 +127,39 @@ void CarApp::handlePositionUpdate(cObject* obj){
             }
         }
         lastDistToRSU = distToRSU;
+}
+
+void CarApp::socketDataArrived(int connId, void *yourPtr, cPacket *msg, bool urgentl) {
+    EV_WARN << "[Vehicle " << nodeId_ << "]: I received a data message of class " << msg->getClassName()
+            << ", name " << msg->getName() << ", byte " << msg->getByteLength() << endl;
+    double currentTime = simTime().dbl();
+
+    if (CoinAssignment* req = dynamic_cast<CoinAssignment*>(msg)) {
+        int vid = req->getVid();
+        if (vid == nodeId_ && coinAssignmentStage != CoinAssignmentStage::FINISHED) {
+            EV_WARN << "[Vehicle " << nodeId_ << "]: I received a message of CoinAssignment" << endl;
+            coinAssignmentStage = CoinAssignmentStage::FINISHED;
+            EV_WARN << "[Vehicle " << nodeId_ << "]: Coin assignment succeed." << endl;
+        }
+    }
+    else if (CoinDepositSignatureRequest* req = dynamic_cast<CoinDepositSignatureRequest*>(msg)) {
+        int vid = req->getVid();
+        if (vid == nodeId_ && coinDepositStage != CoinDepositStage::SIGNATURE_SENT) {
+            EV_WARN << "[Vehicle " << nodeId_ << "]: I received a message of CoinDepositSignatureRequest" << endl;
+            std::pair<double,double> latency = cpuModel.getLatency(currentTime, COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV);
+
+            CoinDepositSignatureResponse* packet = new CoinDepositSignatureResponse();
+            packet->setByteLength(COIN_DEPOSIT_SIGNATURE_RESPONSE_BYTE_SIZE);
+            packet->setVid(nodeId_);
+
+            sendPacket(packet);
+            coinDepositStage = CoinDepositStage::SIGNATURE_SENT;
+            EV_WARN << "[Vehicle " << nodeId_ << "]: I sent a message of CoinDepositSignatureResponse. Queue time " << latency.first
+                    << " Computation time " << latency.second << endl;
+        }
+    }
+
+    TCPAppBase::socketDataArrived(connId, yourPtr, msg, urgentl);
 }
 
 void CarApp::receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details){

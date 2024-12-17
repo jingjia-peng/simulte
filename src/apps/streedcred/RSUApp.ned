@@ -24,7 +24,7 @@ simple RSUApp like ITCPApp
 		string localAddress = default("");
 		int localPort = default(1000);
 		string serverThreadClass = default("RSUThread");
-		string dataTransferMode @enum("bytecount", "object", "bytestream") = default("bytecount");
+		string dataTransferMode @enum("bytecount", "object", "bytestream") = default("object");
 		
 		int numCpuCores;
     	int COIN_ASSIGNMENT_BYTE_SIZE;
